@@ -1,0 +1,39 @@
+plugins {
+    id 'java-library'
+}
+
+group = 'com.automation'
+version = '1.0-SNAPSHOT'
+
+repositories {
+    google()
+    mavenCentral()
+}
+
+dependencies {
+    // Android and Espresso dependencies
+    api 'androidx.test.espresso:espresso-core:3.5.1'
+    api 'androidx.test.espresso:espresso-intents:3.5.1'
+    api 'androidx.test.espresso:espresso-idling-resource:3.5.1'
+    api 'androidx.test.espresso:espresso-contrib:3.5.1'
+    api 'androidx.test:runner:1.5.2'
+    api 'androidx.test:rules:1.5.0'
+    api 'androidx.test.ext:junit:1.1.5'
+    
+    // JUnit for Android instrumentation tests (required for AndroidJUnit4 runner)
+    api 'junit:junit:4.13.2'
+    
+    // Data-driven testing
+    api 'org.apache.poi:poi:5.2.4'
+    api 'org.apache.poi:poi-ooxml:5.2.4'
+    api 'com.google.code.gson:gson:2.10.1'
+    
+    // Utilities
+    api 'org.apache.commons:commons-lang3:3.14.0'
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+}
+

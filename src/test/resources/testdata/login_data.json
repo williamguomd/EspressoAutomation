@@ -1,0 +1,24 @@
+{
+  "valid_username": "testuser@example.com",
+  "valid_password": "TestPassword123",
+  "invalid_username": "invalid@example.com",
+  "invalid_password": "WrongPassword",
+  "test_users": [
+    {
+      "username": "user1@example.com",
+      "password": "Password1",
+      "expected_result": "success"
+    },
+    {
+      "username": "user2@example.com",
+      "password": "Password2",
+      "expected_result": "success"
+    },
+    {
+      "username": "invalid@example.com",
+      "password": "WrongPassword",
+      "expected_result": "failure"
+    }
+  ]
+}
+
