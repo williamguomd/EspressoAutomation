@@ -132,8 +132,6 @@ After building, the AAR library file will be in:
 ./gradlew clean
 ```
 
-**For detailed build instructions, see [BUILD.md](BUILD.md)**
-
 ### Setup
 
 1. **Update View IDs**: Replace placeholder view IDs (0) in page objects with actual view IDs from your app.
@@ -201,8 +199,6 @@ Automatic screenshots are named with the pattern:
 ```
 <TestClassName>_<TestMethodName>_<timestamp>.png
 ```
-
-Example: `LoginTest_testLoginWithValidCredentials_2024-01-15_14-30-45.png`
 
 ## Best Practices
 
@@ -286,31 +282,6 @@ ANDROID_SERIAL=emulator-5554 ./gradlew connectedAndroidTest
 
 GMD automatically creates, launches, and manages emulators for testing. No manual device setup required!
 
-```bash
-# Show GMD information and available devices
-./gradlew gmdInfo
-
-# Run tests on specific GMD device
-./gradlew testOnPixel2Api30    # Pixel 2, API 30
-./gradlew testOnPixel4Api33    # Pixel 4, API 33
-./gradlew testOnPixel6Api34     # Pixel 6, API 34
-
-# Run tests on all GMD devices in parallel
-./gradlew testOnAllGMDDevices
-
-# Run on device group (all devices)
-./gradlew allDevicesDebugAndroidTest
-
-# Run SPECIFIC tests on SPECIFIC devices (using parameters)
-./gradlew pixel6api34DebugAndroidTest -PtestClass=LoginTest
-./gradlew pixel4api33DebugAndroidTest -PtestClass=com.automation.test.LoginTest
-./gradlew pixel6api34DebugAndroidTest -PtestClass=LoginTest -PtestMethod=testLoginWithValidCredentials
-./gradlew pixel2api30DebugAndroidTest -PtestPackage=com.automation.test
-
-# Show usage information
-./gradlew runTestOnDevice
-```
-
 **GMD Benefits:**
 - ✅ No manual emulator setup required
 - ✅ Consistent device configurations across team/CI
@@ -344,7 +315,5 @@ Test reports are generated in:
 - Test data files should be placed in `src/androidTest/resources/testdata/` or `src/test/resources/testdata/`
 - The framework uses Java 17, ensure your project is configured accordingly
 - **To run instrumentation tests**: Connect an Android device or start an emulator, then run `./gradlew connectedAndroidTest`
-
-**For more details on project structure, see [docs/PROJECT_STRUCTURE.md](docs/PROJECT_STRUCTURE.md)**
 
 
