@@ -4,17 +4,44 @@ import androidx.test.espresso.IdlingRegistry;
 import androidx.test.espresso.idling.CountingIdlingResource;
 import com.automation.idling.IdlingResourceManager;
 import com.automation.utils.EspressoIntentsHelper;
+import com.automation.utils.ScreenshotHelper;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
+import org.junit.rules.TestWatcher;
+import org.junit.runner.Description;
 
 /**
  * Base test class for all Espresso tests
  * Provides common setup and teardown methods
+ * Automatically takes screenshots on test failure
  */
 public abstract class BaseTest {
     
     protected IdlingResourceManager idlingResourceManager;
+    
+    /**
+     * TestWatcher rule that automatically takes screenshots when tests fail.
+     * Screenshots are saved with the test class and method name.
+     */
+    @Rule
+    public TestWatcher screenshotWatcher = new TestWatcher() {
+        @Override
+        protected void failed(Throwable e, Description description) {
+            super.failed(e, description);
+            // Take screenshot on test failure
+            String testClassName = description.getClassName();
+            String testMethodName = description.getMethodName();
+            String screenshotPath = ScreenshotHelper.takeScreenshot(testClassName, testMethodName);
+            
+            if (screenshotPath != null) {
+                System.out.println("Test failed. Screenshot saved: " + screenshotPath);
+            } else {
+                System.err.println("Test failed but screenshot could not be saved");
+            }
+        }
+    };
     
     public BaseTest() {
         this.idlingResourceManager = IdlingResourceManager.getInstance();

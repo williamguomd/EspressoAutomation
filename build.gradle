@@ -25,12 +25,6 @@ android {
         sourceCompatibility JavaVersion.VERSION_17
         targetCompatibility JavaVersion.VERSION_17
     }
-
-    sourceSets {
-        // Include automation tests from main/java in androidTest
-        // This allows tests to stay in main/java/com/automation/test if preferred
-        androidTest.java.srcDirs += 'src/main/java/com/automation/test'
-    }
 }
 
 repositories {
@@ -52,6 +46,7 @@ dependencies {
     api libs.testRules
     api libs.testExtJunit
     api libs.junit
+    api libs.uiautomator
     
     // Data-driven testing (for tests)
     androidTestImplementation libs.poi

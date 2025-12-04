@@ -24,7 +24,14 @@ A comprehensive Espresso test framework for Android UI automation testing with s
 ### ✅ Utility Classes
 - `ViewActionsHelper` - Frequently used view actions (click, type, swipe, etc.)
 - `WaitHelper` - Wait operations and idling resource management
+- `ScreenshotHelper` - Automatic screenshot capture on test failures
 - Reusable methods for common test operations
+
+### ✅ Screenshot on Failure
+- Automatic screenshot capture when tests fail
+- Screenshots saved with test class and method name
+- Manual screenshot capture support for debugging
+- Screenshots saved to device storage (accessible via ADB)
 
 ### ✅ Data-Driven Testing
 - `TestDataProvider` - Load test data from JSON files
@@ -53,14 +60,11 @@ EspressoAutomation/
 │   │               ├── utils/           # Utility classes
 │   │               │   ├── EspressoIntentsHelper.java
 │   │               │   ├── ViewActionsHelper.java
-│   │               │   └── WaitHelper.java
+│   │               │   ├── WaitHelper.java
+│   │               │   └── ScreenshotHelper.java
 │   │               ├── data/            # Data-driven testing
 │   │               │   ├── TestDataProvider.java
 │   │               │   └── TestDataModel.java
-│   │               └── test/            # Automation tests (also in androidTest)
-│   │                   ├── BaseTest.java
-│   │                   ├── LoginTest.java
-│   │                   └── DataDrivenLoginTest.java
 │   ├── androidTest/                     # Android instrumentation tests
 │   │   ├── java/
 │   │   │   └── com/
@@ -138,6 +142,68 @@ After building, the AAR library file will be in:
 
 3. **Add Test Data**: Add your test data files to `src/test/resources/testdata/`
 
+## Screenshot on Failure
+
+The framework automatically captures screenshots when tests fail, making debugging easier.
+
+### Automatic Screenshot Capture
+
+Screenshots are automatically taken when a test fails using JUnit's `TestWatcher` rule in `BaseTest`. No additional code is needed in your test classes.
+
+**Features:**
+- Automatic capture on test failure
+- Screenshots named with test class and method name
+- Timestamp included in filename
+- Saved to device storage (accessible via ADB)
+
+### Screenshot Location
+
+Screenshots are saved to:
+- **Primary location**: `/sdcard/Pictures/screenshots/` (external storage)
+- **Fallback**: App's files directory if external storage is unavailable
+
+### Accessing Screenshots
+
+```bash
+# Pull screenshots from device/emulator
+adb pull /sdcard/Pictures/screenshots/ ./screenshots/
+
+# List screenshots on device
+adb shell ls -la /sdcard/Pictures/screenshots/
+
+# View screenshot directory path (from test output)
+# Check test logs for: "Screenshot saved: /path/to/screenshot.png"
+```
+
+### Manual Screenshot Capture
+
+You can also take screenshots manually during tests for debugging:
+
+```java
+import com.automation.utils.ScreenshotHelper;
+
+@Test
+public void testExample() {
+    // Take a screenshot with custom name
+    ScreenshotHelper.takeScreenshot("before_login");
+    
+    // Perform test actions
+    loginPage.login("user", "pass");
+    
+    // Take another screenshot
+    ScreenshotHelper.takeScreenshot("after_login");
+}
+```
+
+### Screenshot Naming
+
+Automatic screenshots are named with the pattern:
+```
+<TestClassName>_<TestMethodName>_<timestamp>.png
+```
+
+Example: `LoginTest_testLoginWithValidCredentials_2024-01-15_14-30-45.png`
+
 ## Best Practices
 
 ### Espresso Testing Best Practices
@@ -174,15 +240,6 @@ After building, the AAR library file will be in:
 
 # Run automation tests via custom task
 ./gradlew automationTest
-
-# Run all tests (unit + automation)
-./gradlew allTests
-
-# Generate test reports
-./gradlew testReport
-
-# List all test classes
-./gradlew listTests
 ```
 
 ### Running Specific Tests
@@ -199,16 +256,6 @@ After building, the AAR library file will be in:
 
 # Run tests matching a pattern
 ./gradlew test --tests "*LoginTest"
-```
-
-### Test Organization Tasks
-
-```bash
-# Clean test results and reports
-./gradlew cleanTestResults
-
-# Run tests with verbose output
-./gradlew test --info
 
 # Run tests and generate HTML reports
 ./gradlew test testReport
@@ -251,11 +298,6 @@ GMD automatically creates, launches, and manages emulators for testing. No manua
 # Run tests on all GMD devices in parallel
 ./gradlew testOnAllGMDDevices
 
-# Direct GMD task names (for advanced usage)
-./gradlew pixel2api30DebugAndroidTest
-./gradlew pixel4api33DebugAndroidTest
-./gradlew pixel6api34DebugAndroidTest
-
 # Run on device group (all devices)
 ./gradlew allDevicesDebugAndroidTest
 
@@ -296,13 +338,13 @@ Test reports are generated in:
 ## Notes
 
 - This is an **Android library project** that can run Espresso instrumentation tests
-- Automation tests are located in both `src/main/java/com/automation/test` and `src/androidTest/java/com/automation/test`
+- **Framework code** (BasePage, utilities, etc.) is in `src/main/java/com/automation/` - this gets compiled into the AAR library
+- **Test code** (BaseTest, LoginTest, etc.) is in `src/androidTest/java/com/automation/test/` - these are instrumentation tests that run on devices
 - View IDs and Activity classes need to be updated to match your actual app
 - Test data files should be placed in `src/androidTest/resources/testdata/` or `src/test/resources/testdata/`
 - The framework uses Java 17, ensure your project is configured accordingly
 - **To run instrumentation tests**: Connect an Android device or start an emulator, then run `./gradlew connectedAndroidTest`
 
-## License
+**For more details on project structure, see [docs/PROJECT_STRUCTURE.md](docs/PROJECT_STRUCTURE.md)**
 
-This framework is provided as-is for use in your test automation projects.
 

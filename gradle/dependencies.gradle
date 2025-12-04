@@ -16,6 +16,7 @@ ext {
         testRules: 'androidx.test:rules:1.5.0',
         testExtJunit: 'androidx.test.ext:junit:1.1.5',
         junit: 'junit:junit:4.13.2',
+        uiautomator: 'androidx.test.uiautomator:uiautomator:2.2.0',
         
         // Data-driven testing (for tests)
         poi: 'org.apache.poi:poi:5.2.4',
