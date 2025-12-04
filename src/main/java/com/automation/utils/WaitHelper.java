@@ -1,6 +1,6 @@
 package com.automation.utils;
 
-import androidx.test.espresso.Espresso;
+import androidx.test.espresso.IdlingRegistry;
 import androidx.test.espresso.IdlingResource;
 
 /**
@@ -22,7 +22,7 @@ public class WaitHelper {
      * @param idlingResource The idling resource to register
      */
     public static void registerIdlingResource(IdlingResource idlingResource) {
-        Espresso.registerIdlingResources(idlingResource);
+        IdlingRegistry.getInstance().register(idlingResource);
     }
     
     /**
@@ -31,7 +31,7 @@ public class WaitHelper {
      * @param idlingResource The idling resource to unregister
      */
     public static void unregisterIdlingResource(IdlingResource idlingResource) {
-        Espresso.unregisterIdlingResources(idlingResource);
+        IdlingRegistry.getInstance().unregister(idlingResource);
     }
     
     /**
@@ -40,7 +40,10 @@ public class WaitHelper {
      * @param idlingResources The idling resources to register
      */
     public static void registerIdlingResources(IdlingResource... idlingResources) {
-        Espresso.registerIdlingResources(idlingResources);
+        IdlingRegistry registry = IdlingRegistry.getInstance();
+        for (IdlingResource resource : idlingResources) {
+            registry.register(resource);
+        }
     }
     
     /**
@@ -49,7 +52,10 @@ public class WaitHelper {
      * @param idlingResources The idling resources to unregister
      */
     public static void unregisterIdlingResources(IdlingResource... idlingResources) {
-        Espresso.unregisterIdlingResources(idlingResources);
+        IdlingRegistry registry = IdlingRegistry.getInstance();
+        for (IdlingResource resource : idlingResources) {
+            registry.unregister(resource);
+        }
     }
 }
 

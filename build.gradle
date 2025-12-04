@@ -1,9 +1,37 @@
 plugins {
-    id 'java-library'
+    id 'com.android.library'
 }
 
 group = 'com.automation'
 version = '1.0-SNAPSHOT'
+
+// Apply configuration files for better organization
+apply from: 'gradle/dependencies.gradle'
+apply from: 'gradle/test-config.gradle'
+apply from: 'gradle/tasks.gradle'
+
+android {
+    namespace 'com.automation'
+    compileSdk 34
+
+    defaultConfig {
+        minSdk 21
+        targetSdk 34
+        
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    sourceSets {
+        // Include automation tests from main/java in androidTest
+        // This allows tests to stay in main/java/com/automation/test if preferred
+        androidTest.java.srcDirs += 'src/main/java/com/automation/test'
+    }
+}
 
 repositories {
     google()
@@ -11,29 +39,25 @@ repositories {
 }
 
 dependencies {
-    // Android and Espresso dependencies
-    api 'androidx.test.espresso:espresso-core:3.5.1'
-    api 'androidx.test.espresso:espresso-intents:3.5.1'
-    api 'androidx.test.espresso:espresso-idling-resource:3.5.1'
-    api 'androidx.test.espresso:espresso-contrib:3.5.1'
-    api 'androidx.test:runner:1.5.2'
-    api 'androidx.test:rules:1.5.0'
-    api 'androidx.test.ext:junit:1.1.5'
+    // Framework dependencies (used by consumers of this library)
+    api libs.gson
+    api libs.commonsLang3
     
-    // JUnit for Android instrumentation tests (required for AndroidJUnit4 runner)
-    api 'junit:junit:4.13.2'
+    // Espresso framework dependencies (needed for BasePage and framework classes in main source set)
+    api libs.espressoCore
+    api libs.espressoIntents
+    api libs.espressoIdlingResource
+    api libs.espressoContrib
+    api libs.testRunner
+    api libs.testRules
+    api libs.testExtJunit
+    api libs.junit
     
-    // Data-driven testing
-    api 'org.apache.poi:poi:5.2.4'
-    api 'org.apache.poi:poi-ooxml:5.2.4'
-    api 'com.google.code.gson:gson:2.10.1'
+    // Data-driven testing (for tests)
+    androidTestImplementation libs.poi
+    androidTestImplementation libs.poiOoxml
     
-    // Utilities
-    api 'org.apache.commons:commons-lang3:3.14.0'
-}
-
-java {
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
+    // Unit test dependencies
+    testImplementation libs.junit
 }
 

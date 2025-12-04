@@ -1,6 +1,6 @@
 package com.automation.idling;
 
-import androidx.test.espresso.Espresso;
+import androidx.test.espresso.IdlingRegistry;
 import androidx.test.espresso.IdlingResource;
 import androidx.test.espresso.idling.CountingIdlingResource;
 
@@ -48,7 +48,7 @@ public class IdlingResourceManager {
         if (!idlingResources.containsKey(name)) {
             CountingIdlingResource resource = new CountingIdlingResource(name);
             idlingResources.put(name, resource);
-            Espresso.registerIdlingResources(resource);
+            IdlingRegistry.getInstance().register(resource);
         }
     }
 
@@ -107,7 +107,7 @@ public class IdlingResourceManager {
     public synchronized void unregisterIdlingResource(String name) {
         CountingIdlingResource resource = idlingResources.remove(name);
         if (resource != null) {
-            Espresso.unregisterIdlingResources(resource);
+            IdlingRegistry.getInstance().unregister(resource);
         }
     }
 
@@ -118,7 +118,7 @@ public class IdlingResourceManager {
      */
     public synchronized void clearAll() {
         for (CountingIdlingResource resource : idlingResources.values()) {
-            Espresso.unregisterIdlingResources(resource);
+            IdlingRegistry.getInstance().unregister(resource);
         }
         idlingResources.clear();
     }

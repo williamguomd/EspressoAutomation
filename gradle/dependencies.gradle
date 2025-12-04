@@ -1,0 +1,25 @@
+// Dependencies configuration
+// This file contains all dependency declarations
+
+ext {
+    // Framework dependencies (used by consumers of this library)
+    libs = [
+        gson: 'com.google.code.gson:gson:2.10.1',
+        commonsLang3: 'org.apache.commons:commons-lang3:3.14.0',
+        
+        // Espresso framework dependencies (needed for BasePage and framework classes in main source set)
+        espressoCore: 'androidx.test.espresso:espresso-core:3.5.1',
+        espressoIntents: 'androidx.test.espresso:espresso-intents:3.5.1',
+        espressoIdlingResource: 'androidx.test.espresso:espresso-idling-resource:3.5.1',
+        espressoContrib: 'androidx.test.espresso:espresso-contrib:3.5.1',
+        testRunner: 'androidx.test:runner:1.5.2',
+        testRules: 'androidx.test:rules:1.5.0',
+        testExtJunit: 'androidx.test.ext:junit:1.1.5',
+        junit: 'junit:junit:4.13.2',
+        
+        // Data-driven testing (for tests)
+        poi: 'org.apache.poi:poi:5.2.4',
+        poiOoxml: 'org.apache.poi:poi-ooxml:5.2.4'
+    ]
+}
+

@@ -57,10 +57,21 @@ EspressoAutomation/
 │   │               ├── data/            # Data-driven testing
 │   │               │   ├── TestDataProvider.java
 │   │               │   └── TestDataModel.java
-│   │               └── test/            # Automation tests
+│   │               └── test/            # Automation tests (also in androidTest)
 │   │                   ├── BaseTest.java
 │   │                   ├── LoginTest.java
 │   │                   └── DataDrivenLoginTest.java
+│   ├── androidTest/                     # Android instrumentation tests
+│   │   ├── java/
+│   │   │   └── com/
+│   │   │       └── automation/
+│   │   │           └── test/
+│   │   │               ├── BaseTest.java
+│   │   │               ├── LoginTest.java
+│   │   │               └── DataDrivenLoginTest.java
+│   │   └── resources/
+│   │       └── testdata/
+│   │           └── login_data.json
 │   └── test/
 │       ├── java/
 │       │   └── com/
@@ -74,9 +85,50 @@ EspressoAutomation/
 ## Getting Started
 
 ### Prerequisites
-- Android SDK
-- Gradle 7.0+
+- Android SDK (API 21+)
+- Android Build Tools
+- Gradle 7.0+ (or use Gradle Wrapper)
 - Java 17+
+- Connected Android device or emulator (for running instrumentation tests)
+
+### Building the Project
+
+#### Quick Start
+
+```bash
+# If Gradle Wrapper exists
+./gradlew build
+
+# If using Gradle directly
+gradle build
+
+# Clean and rebuild
+./gradlew clean build
+```
+
+#### Build Output
+
+After building, the AAR library file will be in:
+- `build/outputs/aar/EspressoAutomation-release.aar` (release variant)
+- `build/outputs/aar/EspressoAutomation-debug.aar` (debug variant)
+
+#### Common Build Commands
+
+```bash
+# Build the library
+./gradlew assemble
+
+# Build and run unit tests
+./gradlew build test
+
+# Build and run all tests (requires device/emulator for instrumentation tests)
+./gradlew build allTests
+
+# Clean build artifacts
+./gradlew clean
+```
+
+**For detailed build instructions, see [BUILD.md](BUILD.md)**
 
 ### Setup
 
@@ -110,23 +162,145 @@ EspressoAutomation/
 
 ## Running Tests
 
+### Basic Test Commands
+
 ```bash
-# Run all tests
+# Run all unit tests (from src/test/java)
 ./gradlew test
 
-# Run specific test class
+# Run automation tests (Android instrumentation tests)
+# Requires a connected device or emulator
+./gradlew connectedAndroidTest
+
+# Run automation tests via custom task
+./gradlew automationTest
+
+# Run all tests (unit + automation)
+./gradlew allTests
+
+# Generate test reports
+./gradlew testReport
+
+# List all test classes
+./gradlew listTests
+```
+
+### Running Specific Tests
+
+```bash
+# Run a specific unit test class
 ./gradlew test --tests "com.automation.test.LoginTest"
 
-# Run with Android test runner (when integrated into Android project)
-./gradlew connectedAndroidTest
+# Run a specific instrumentation test class
+./gradlew connectedAndroidTest -Pandroid.testInstrumentationRunnerArguments.class=com.automation.test.LoginTest
+
+# Run tests in a specific package
+./gradlew test --tests "com.automation.test.*"
+
+# Run tests matching a pattern
+./gradlew test --tests "*LoginTest"
 ```
+
+### Test Organization Tasks
+
+```bash
+# Clean test results and reports
+./gradlew cleanTestResults
+
+# Run tests with verbose output
+./gradlew test --info
+
+# Run tests and generate HTML reports
+./gradlew test testReport
+```
+
+### Automation Tests (Android Instrumentation)
+
+#### Using Connected Devices/Emulators
+
+```bash
+# Run all automation tests (requires connected device/emulator)
+./gradlew connectedAndroidTest
+
+# Run specific test class
+./gradlew connectedAndroidTest -Pandroid.testInstrumentationRunnerArguments.class=com.automation.test.LoginTest
+
+# Run tests on specific device
+./gradlew connectedAndroidTest -Pandroid.testInstrumentationRunnerArguments.class=com.automation.test.LoginTest -Pandroid.testInstrumentationRunnerArguments.package=com.automation.test
+
+# List connected devices
+./gradlew listDevices
+
+# Run on specific device by serial
+ANDROID_SERIAL=emulator-5554 ./gradlew connectedAndroidTest
+```
+
+#### Using Gradle-Managed Devices (GMD)
+
+GMD automatically creates, launches, and manages emulators for testing. No manual device setup required!
+
+```bash
+# Show GMD information and available devices
+./gradlew gmdInfo
+
+# Run tests on specific GMD device
+./gradlew testOnPixel2Api30    # Pixel 2, API 30
+./gradlew testOnPixel4Api33    # Pixel 4, API 33
+./gradlew testOnPixel6Api34     # Pixel 6, API 34
+
+# Run tests on all GMD devices in parallel
+./gradlew testOnAllGMDDevices
+
+# Direct GMD task names (for advanced usage)
+./gradlew pixel2api30DebugAndroidTest
+./gradlew pixel4api33DebugAndroidTest
+./gradlew pixel6api34DebugAndroidTest
+
+# Run on device group (all devices)
+./gradlew allDevicesDebugAndroidTest
+
+# Run SPECIFIC tests on SPECIFIC devices (using parameters)
+./gradlew pixel6api34DebugAndroidTest -PtestClass=LoginTest
+./gradlew pixel4api33DebugAndroidTest -PtestClass=com.automation.test.LoginTest
+./gradlew pixel6api34DebugAndroidTest -PtestClass=LoginTest -PtestMethod=testLoginWithValidCredentials
+./gradlew pixel2api30DebugAndroidTest -PtestPackage=com.automation.test
+
+# Show usage information
+./gradlew runTestOnDevice
+```
+
+**GMD Benefits:**
+- ✅ No manual emulator setup required
+- ✅ Consistent device configurations across team/CI
+- ✅ Parallel testing on multiple devices
+- ✅ Automatic device lifecycle management
+- ✅ Works great in CI/CD pipelines
+
+**GMD Requirements:**
+- Android Gradle Plugin 7.3.0+ (current: 8.2.0 ✅)
+- Hardware acceleration (for local development)
+- For CI without GPU, use: `-Pandroid.testoptions.manageddevices.emulator.gpu=swiftshader_indirect`
+
+**Test Sharding (split tests across instances):**
+Add to `gradle.properties`:
+```properties
+android.experimental.androidTest.numManagedDeviceShards=2
+```
+
+### Test Reports
+
+Test reports are generated in:
+- HTML: `build/reports/tests/test/index.html`
+- XML: `build/test-results/test/TEST-*.xml`
 
 ## Notes
 
-- This framework is designed to be integrated into an Android project
+- This is an **Android library project** that can run Espresso instrumentation tests
+- Automation tests are located in both `src/main/java/com/automation/test` and `src/androidTest/java/com/automation/test`
 - View IDs and Activity classes need to be updated to match your actual app
-- Test data files should be placed in `src/test/resources/testdata/`
+- Test data files should be placed in `src/androidTest/resources/testdata/` or `src/test/resources/testdata/`
 - The framework uses Java 17, ensure your project is configured accordingly
+- **To run instrumentation tests**: Connect an Android device or start an emulator, then run `./gradlew connectedAndroidTest`
 
 ## License
 
