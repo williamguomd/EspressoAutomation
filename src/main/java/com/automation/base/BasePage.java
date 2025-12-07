@@ -1,13 +1,18 @@
 package com.automation.base;
 
 import androidx.annotation.IdRes;
+import androidx.test.espresso.DataInteraction;
 import androidx.test.espresso.ViewInteraction;
 import androidx.test.espresso.action.ViewActions;
 import androidx.test.espresso.assertion.ViewAssertions;
 import androidx.test.espresso.contrib.RecyclerViewActions;
 import androidx.test.espresso.matcher.ViewMatchers;
 
+import static androidx.test.espresso.Espresso.onData;
 import static androidx.test.espresso.Espresso.onView;
+import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
@@ -82,6 +87,35 @@ public abstract class BasePage {
         return onView(withId(recyclerViewId))
                 .perform(RecyclerViewActions.scrollToPosition(position));
     }
+    
+    /**
+     * Scroll to a specific position in a ListView
+     * Uses onData() which is safer for AdapterView widgets
+     * 
+     * @param listViewId The ID of the ListView
+     * @param position The position to scroll to (0-based index)
+     * @return DataInteraction for method chaining
+     */
+    protected DataInteraction scrollToListView(@IdRes int listViewId, int position) {
+        return onData(instanceOf(Object.class))
+                .inAdapterView(withId(listViewId))
+                .atPosition(position);
+    }
+
+    /**
+     * Scroll to a ListView item by matching its text value
+     * Uses onData() which is safer for AdapterView widgets
+     * Assumes the adapter data is of type String
+     * 
+     * @param listViewId The ID of the ListView
+     * @param value The text value to match
+     * @return DataInteraction for method chaining
+     */
+    protected DataInteraction scrollToListViewItem(@IdRes int listViewId, String value) {
+        return onData(allOf(is(instanceOf(String.class)), is(value)))
+                .inAdapterView(withId(listViewId));
+    }
+    
     
     /**
      * Verify view is not displayed
